@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  password    String
+  role        Role     @relation(fields: [roleId], references: [id])
+  roleId      Int
+  jobs        Job[]    // Много вакансий для одного работодателя
+  resumes     Resume[] // Много резюме
+  applications Application[] // Много заявок на вакансии
+}
+
+model Role {
+  id   Int     @id @default(autoincrement())
+  name String  @unique
+  users User[] // Один пользователь может иметь одну роль
+}
+
+
+model Application {
+  id        Int    @id @default(autoincrement())
+  job       Job    @relation(fields: [jobId], references: [id])
+  jobId     Int
+  seeker    User   @relation(fields: [seekerId], references: [id])
+  seekerId  Int
+}
+
+model Job {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String
+  employer    User           @relation(fields: [employerId], references: [id])
+  employerId  Int
+  applications Application[] // Добавлено обратное отношение
+}
+
+model Resume {
+  id        Int    @id @default(autoincrement())
+  content   String
+  seeker    User   @relation(fields: [seekerId], references: [id])
+  seekerId  Int
+}
+
+
