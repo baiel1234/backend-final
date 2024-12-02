@@ -55,4 +55,13 @@ model Resume {
   seekerId  Int
 }
 
+model Vacancy {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  location    String
+  salary      Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
