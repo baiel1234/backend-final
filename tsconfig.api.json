@@ -1,0 +1,9 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+      "rootDir": "./api", // Ограничиваем область для компиляции API
+      "outDir": "./dist/api" // Компиляция в отдельную папку
+    },
+    "include": ["api/**/*"]
+  }
+  

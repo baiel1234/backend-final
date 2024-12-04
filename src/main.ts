@@ -1,21 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import express from 'express';
+import { ExpressAdapter } from '@nestjs/platform-express';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  
-  // Настройка Swagger
+export async function createApp() { // Экспорт функции
+  const server = express();
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
   const config = new DocumentBuilder()
-    .setTitle('HeadHunter API')
-    .setDescription('API для управления вакансиями и их подробной информацией')
+    .setTitle('Headhunter API')
+    .setDescription('API documentation for the Headhunter backend')
     .setVersion('1.0')
-    .addBearerAuth() // Если вы используете JWT, добавьте эту строку
     .build();
-
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
-
-  await app.listen(process.env.PORT ?? 3000);
+  SwaggerModule.setup('api/docs', app, document);
+  app.enableCors();
+  await app.init();
+  return server;
 }
-bootstrap();
+
