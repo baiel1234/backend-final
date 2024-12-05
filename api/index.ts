@@ -1,4 +1,4 @@
-import { createApp } from '../dist/src/main'; // Убедитесь, что этот путь правильный
+import { createApp } from '../dist/main'; // Убедитесь, что этот путь правильный
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
