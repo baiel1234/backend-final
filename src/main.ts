@@ -22,4 +22,3 @@ export async function createApp() {
 
   return server;
 }
-

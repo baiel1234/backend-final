@@ -7,6 +7,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     app(req, res); // Передаём запросы в ваше приложение
   } catch (error) {
     console.error('Error initializing the app:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send('Internal Server Error i');
   }
 }
