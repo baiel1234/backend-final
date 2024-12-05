@@ -1,29 +1,39 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ExpressAdapter } from '@nestjs/platform-express';
-import express from 'express';
+import { Handler, Context, Callback } from 'aws-lambda';
+import { Server } from 'http';
+import { createServer, proxy } from 'aws-serverless-express';
 
-export async function createApp() {
-  const server = express();
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+let cachedServer: Server;
 
-  // Настройка Swagger
+async function createApp() {
+  const app = await NestFactory.create(AppModule);
+
   const config = new DocumentBuilder()
     .setTitle('API Documentation')
     .setDescription('API for the backend application')
     .setVersion('1.0')
     .addTag('API')
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  // Включение CORS
   app.enableCors();
   await app.init();
 
-  return server;
+  return createServer(app.getHttpAdapter().getInstance());
 }
+
+export const handler: Handler = async (event: any, context: Context, callback: Callback) => {
+  if (!cachedServer) {
+    cachedServer = await createApp();
+  }
+  return proxy(cachedServer, event, context, 'PROMISE').promise;
+};
+
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
