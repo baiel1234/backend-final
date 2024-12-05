@@ -4,9 +4,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import express from 'express';
 
-export async function createApp() {
-  const server = express();
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
     .setTitle('API Documentation')
@@ -18,7 +17,10 @@ export async function createApp() {
   SwaggerModule.setup('/api/docs', app, document);
 
   app.enableCors();
-  await app.init();
 
-  return server;
+  const PORT = process.env.PORT || 3000;
+  await app.listen(PORT);
+  console.log(`Application is running on: http://localhost:${PORT}/api/docs`);
 }
+
+bootstrap();
