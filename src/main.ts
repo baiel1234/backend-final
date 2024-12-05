@@ -5,7 +5,8 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import express from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const server = express();
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
 
   const config = new DocumentBuilder()
     .setTitle('API Documentation')
@@ -18,9 +19,9 @@ async function bootstrap() {
 
   app.enableCors();
 
-  const PORT = process.env.PORT || 3000;
-  await app.listen(PORT);
-  console.log(`Application is running on: http://localhost:${PORT}/api/docs`);
+  // Vercel will handle serverless functions
+  await app.init();
+  server.listen(3000);
 }
 
 bootstrap();
