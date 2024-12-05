@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import * as express from 'express'; // Исправление импорта Express
+import express from 'express';
 
 export async function createApp() {
   const server = express();
@@ -24,14 +24,3 @@ export async function createApp() {
 
   return server;
 }
-
-// Локальный запуск приложения
-async function bootstrap() {
-  const app = await createApp();
-  const PORT = process.env.PORT || 3000; // Используем порт из окружения или 3000
-  app.listen(PORT, () => {
-    console.log(`Application is running on: http://localhost:${PORT}/api/docs`);
-  });
-}
-
-bootstrap();
