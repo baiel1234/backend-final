@@ -1,12 +1,7 @@
 import { createApp } from '../dist/main'; // Убедитесь, что этот путь правильный
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    const server = await createApp();
-    server(req, res); // Передаём запросы в ваше приложение
-  } catch (error) {
-    console.error('Error initializing the app:', error);
-    res.status(500).send('Internal Server Error i');
-  }
+export default async function handler(req: any, res: any) {
+  const server = await createApp();
+  server(req, res); // Пробрасываем запрос в Express сервер
 }

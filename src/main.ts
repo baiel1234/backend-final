@@ -2,12 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ExpressAdapter } from '@nestjs/platform-express';
-import express from 'express';
+import * as express from 'express'; // Исправление импорта Express
 
 export async function createApp() {
   const server = express();
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
 
+  // Настройка Swagger
   const config = new DocumentBuilder()
     .setTitle('API Documentation')
     .setDescription('API for the backend application')
@@ -17,8 +18,20 @@ export async function createApp() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
+  // Включение CORS
   app.enableCors();
   await app.init();
 
   return server;
 }
+
+// Локальный запуск приложения
+async function bootstrap() {
+  const app = await createApp();
+  const PORT = process.env.PORT || 3000; // Используем порт из окружения или 3000
+  app.listen(PORT, () => {
+    console.log(`Application is running on: http://localhost:${PORT}/api/docs`);
+  });
+}
+
+bootstrap();
